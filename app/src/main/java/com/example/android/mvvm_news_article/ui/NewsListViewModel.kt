@@ -4,10 +4,13 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.example.android.mvvm_news_article.BaseViewModel
 import com.example.android.mvvm_news_article.model.Article
 import com.example.android.mvvm_news_article.model.ArticleDao
 import com.example.android.mvvm_news_article.network.ArticleApi
+import com.example.android.mvvm_news_article.utils.convertLongToDateString
+import com.example.android.mvvm_news_article.utils.isUpdated
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -34,6 +37,14 @@ class NewsListViewModel(
     val errorMassage: LiveData<Boolean>
         get() = _errorMassage
 
+    private val _refresh = MutableLiveData<Boolean>()
+    val refresh: LiveData<Boolean>
+        get() = _refresh
+
+    val lastUpdatedString: LiveData<String> = Transformations.map(articles){
+        convertLongToDateString(it.last().timestamp, application.resources)
+    }
+
     init {
         loadArticles()
     }
@@ -41,13 +52,14 @@ class NewsListViewModel(
     private fun loadArticles() {
         subscription = Observable.fromCallable { articleDao.all }
             .concatMap { dbArticleList ->
-                if (dbArticleList.isEmpty())
+                if (dbArticleList.isNotEmpty() && isUpdated(articleDao.getArticle()?.timestamp))
+                    Observable.just(dbArticleList)
+                else {
                     articleApi.getArticles().concatMap { apiArticleList ->
                         articleDao.insertAll(*apiArticleList.articles.toTypedArray())
                         Observable.just(apiArticleList.articles)
                     }
-                else
-                    Observable.just(dbArticleList)
+                }
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -60,7 +72,7 @@ class NewsListViewModel(
     }
 
     private fun onFetchArticleListStart() {
-        _isLoaderVisible.value = true
+//        _isLoaderVisible.value = true
     }
 
     private fun onFetchPostListFinish() {
@@ -69,15 +81,22 @@ class NewsListViewModel(
 
     private fun onFetchArticleListSuccess(result: List<Article>) {
         _articles.value = result
+        _refresh.value = false
+
     }
 
     private fun onFetchArticleListError(errorMassage: Throwable) {
         _errorMassage.value = true
+        _refresh.value = false
         Log.e("ErrorMassage", errorMassage.message)
     }
 
     override fun onCleared() {
         super.onCleared()
         subscription.dispose()
+    }
+
+    fun onRefresh() {
+        loadArticles()
     }
 }

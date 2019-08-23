@@ -30,10 +30,17 @@ class NewsListActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         viewModel.isLoaderVisible.observe(this, Observer {
-            when (it) {
+            when(it){
                 true -> binding.loader.visibility = View.VISIBLE
                 false -> binding.loader.visibility = View.GONE
             }
+        })
+        binding.swipeToRefreshLayout.setOnRefreshListener {
+            viewModel.onRefresh()
+        }
+
+        viewModel.refresh.observe(this, Observer {
+            binding.swipeToRefreshLayout.isRefreshing = false
         })
 
         viewModel.errorMassage.observe(this, Observer {
@@ -44,6 +51,7 @@ class NewsListActivity : AppCompatActivity() {
                 ).show()
             }
         })
+
         binding.articleList.adapter = NewsListAdapter()
     }
 }
