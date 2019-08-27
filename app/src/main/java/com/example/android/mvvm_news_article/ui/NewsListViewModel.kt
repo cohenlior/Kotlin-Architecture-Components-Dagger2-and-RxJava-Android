@@ -4,12 +4,10 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import com.example.android.mvvm_news_article.BaseViewModel
 import com.example.android.mvvm_news_article.model.Article
 import com.example.android.mvvm_news_article.model.ArticleDao
 import com.example.android.mvvm_news_article.network.ArticleApi
-import com.example.android.mvvm_news_article.utils.convertLongToDateString
 import com.example.android.mvvm_news_article.utils.isUpdated
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -41,10 +39,6 @@ class NewsListViewModel(
     val refresh: LiveData<Boolean>
         get() = _refresh
 
-    val lastUpdatedString: LiveData<String> = Transformations.map(articles){
-        convertLongToDateString(it.last().timestamp, application.resources)
-    }
-
     init {
         loadArticles()
     }
@@ -55,6 +49,7 @@ class NewsListViewModel(
                 if (dbArticleList.isNotEmpty() && isUpdated(articleDao.getArticle()?.timestamp))
                     Observable.just(dbArticleList)
                 else {
+                    articleDao.clear()
                     articleApi.getArticles().concatMap { apiArticleList ->
                         articleDao.insertAll(*apiArticleList.articles.toTypedArray())
                         Observable.just(apiArticleList.articles)
@@ -82,7 +77,6 @@ class NewsListViewModel(
     private fun onFetchArticleListSuccess(result: List<Article>) {
         _articles.value = result
         _refresh.value = false
-
     }
 
     private fun onFetchArticleListError(errorMassage: Throwable) {

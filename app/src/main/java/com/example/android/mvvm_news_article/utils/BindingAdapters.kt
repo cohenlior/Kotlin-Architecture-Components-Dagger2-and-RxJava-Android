@@ -1,6 +1,5 @@
 package com.example.android.mvvm_news_article.utils
 
-import android.provider.MediaStore
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
@@ -10,7 +9,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.android.mvvm_news_article.R
 import com.example.android.mvvm_news_article.model.Article
-import com.example.android.mvvm_news_article.model.ArticleResult
 import com.example.android.mvvm_news_article.ui.NewsListAdapter
 
 @BindingAdapter("listData")
@@ -36,10 +34,16 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
     }
 }
 
-
 @BindingAdapter("articleDateFormatted")
 fun TextView.setArticleDateFormatted(item: Article?) {
     item?.let {
         text = formatDate(item.publishedAt)
+    }
+}
+
+@BindingAdapter("articleLastUpdate")
+fun TextView.setArticleLastUpdate(item: Article?) {
+    item?.let {
+        text = convertLongToDateString(item.timestamp, context.resources)
     }
 }

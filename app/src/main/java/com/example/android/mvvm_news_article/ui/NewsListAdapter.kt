@@ -1,5 +1,6 @@
 package com.example.android.mvvm_news_article.ui
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -15,8 +16,8 @@ class NewsListAdapter : ListAdapter<Article, NewsListAdapter.ViewHolder>(DiffCal
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val article = getItem(position)
-        holder.bind(article)
+        val articleItem = getItem(position)
+        holder.bind(articleItem)
     }
 
     class ViewHolder private constructor(val binding: ListItemArticleBinding) :
@@ -37,10 +38,11 @@ class NewsListAdapter : ListAdapter<Article, NewsListAdapter.ViewHolder>(DiffCal
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Article>() {
-        override fun areItemsTheSame(oldItem:Article, newItem: Article): Boolean {
-            return oldItem.id === newItem.id
+        override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
+            return oldItem.id == newItem.id
         }
 
+        @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
             return oldItem == newItem
         }

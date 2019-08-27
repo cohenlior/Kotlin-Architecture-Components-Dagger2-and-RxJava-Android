@@ -17,6 +17,7 @@ buildscript {
         version_dagger2 = "2.16"
         version_rx_java = "2.2.8"
         version_rx_android = "2.1.0"
+        version_coroutine = "1.1.0"
     }
 
     repositories {

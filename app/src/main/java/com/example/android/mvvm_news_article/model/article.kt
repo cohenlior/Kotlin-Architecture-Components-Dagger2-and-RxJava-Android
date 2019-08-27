@@ -8,7 +8,7 @@ data class ArticleResult(val articles: List<Article>)
 @Entity
 data class Article(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Long,
     val description: String?,
     val publishedAt: String?,
     val title: String?,
