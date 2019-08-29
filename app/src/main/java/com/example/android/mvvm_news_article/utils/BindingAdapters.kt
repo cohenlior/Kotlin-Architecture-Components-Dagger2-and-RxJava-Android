@@ -15,7 +15,7 @@ import com.example.android.mvvm_news_article.ui.NewsListAdapter
 fun bindRecyclerViewFavorites(recyclerView: RecyclerView, data: List<Article>?) {
     val adapter = recyclerView.adapter as NewsListAdapter
     if (data != null) {
-        adapter.submitList(data)
+        adapter.addHeaderAndSubmitList(data)
     }
 }
 
@@ -41,9 +41,9 @@ fun TextView.setArticleDateFormatted(item: Article?) {
     }
 }
 
-@BindingAdapter("articleLastUpdate")
-fun TextView.setArticleLastUpdate(item: Article?) {
-    item?.let {
-        text = convertLongToDateString(item.timestamp, context.resources)
+@BindingAdapter("articlesLastSync")
+fun TextView.setLastSync(data: List<Article>?) {
+    data?.let {
+        text = convertLongToDateString(data.last().timestamp, context.resources)
     }
 }

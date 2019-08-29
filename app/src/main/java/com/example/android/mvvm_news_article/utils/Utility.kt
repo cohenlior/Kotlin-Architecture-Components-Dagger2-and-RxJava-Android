@@ -6,11 +6,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 fun convertLongToDateString(systemTime: Long, resources: Resources): String {
-    return resources.getString(
-        R.string.formatted_last_update,
-        SimpleDateFormat("dd-MMM', 'HH:mm", Locale.getDefault())
-            .format(systemTime).toString()
-    )
+    return resources.getString(R.string.formatted_last_sync, SimpleDateFormat("dd-MMM', 'HH:mm", Locale.getDefault())
+            .format(systemTime).toString())
 }
 
 fun formatDate(publishedAt: String?): String {

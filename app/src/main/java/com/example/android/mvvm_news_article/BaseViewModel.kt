@@ -8,7 +8,7 @@ import com.example.android.mvvm_news_article.injection.component.ViewModelInject
 import com.example.android.mvvm_news_article.injection.module.NetworkModule
 import com.example.android.mvvm_news_article.ui.NewsListViewModel
 
-abstract class BaseViewModel(application: Application): AndroidViewModel(application){
+abstract class BaseViewModel: ViewModel(){
     private val injector: ViewModelInjector = DaggerViewModelInjector
         .builder()
         .networkModule(NetworkModule)

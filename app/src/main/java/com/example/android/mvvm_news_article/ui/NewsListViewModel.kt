@@ -15,9 +15,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class NewsListViewModel(
-    private val articleDao: ArticleDao, application: Application
-) : BaseViewModel(application) {
+class NewsListViewModel(private val articleDao: ArticleDao) : BaseViewModel() {
     @Inject
     lateinit var articleApi: ArticleApi
 
